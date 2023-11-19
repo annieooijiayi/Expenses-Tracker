@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1700289913 source:c:\users\annie\onedrive\documents\c language\expenses tracker\main.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+
