@@ -21,7 +21,7 @@ void getTransactionDate(char date[]){
     }
 }
 
-void addTransaction(FILE *file, int option, char *date, float amount, char *category){
+void appendTransaction(FILE *file, int option, char *date, float amount, char *category){
     if (option == 2){
         amount = -amount;
     }
@@ -60,55 +60,86 @@ void printTotal(FILE *file){
 
 int main()
 {
+    int menu;
     char date[10];
     float amount;
     char category[30];
     int option;
     FILE *file;
 
-    time_t dt = time(NULL); //current time in seconds since epoch
-    struct tm *month_year = localtime(&dt); // convert the time to 'struct my' containing the individual components of the time (year, month, day, etc.).
-    char filename[50];
+    do{
+        printf("==== Menu ====\n");
+        printf("[1] New Transaction\n");
+        printf("[2] Exit\n");
+        printf("Please select an action to proceed: ");
+        scanf("%d", &menu);
 
-    strftime(filename, sizeof(filename), "Expenses_%b_%Y.txt", month_year);
-
-    file = fopen(filename, "a+");
-
-    if (file == NULL){
-        file = fopen(filename, "w+");
-        if (file == NULL){
-            printf("Error opening the file.\n");
-            return 1;
+        while (menu != 1 && menu != 2){
+            printf("Invalid input. Please select 1 or 2.\n");
+            printf("==== Menu ====\n");
+            printf("[1] New Transaction\n");
+            printf("[2] Exit\n");
+            printf("Please select an action to proceed: ");
+            scanf("%d", &menu);
         }
-    }
 
-    printf("[1] Income\n");
-    printf("[2] Expense\n");
-    printf("Please choose an option below: ");
-    scanf("%d", &option);
-    while (option != 1 && option != 2){
-        printf("Invalid input. Please select 1 or 2.\n");
+        if (menu == 2){
+            printf("See you next time.\n");
+            break;
+        }
+
+        time_t dt = time(NULL); //current time in seconds since epoch
+        struct tm *month_year = localtime(&dt); // convert the time to 'struct my' containing the individual components of the time (year, month, day, etc.).
+        char filename[50];
+
+        strftime(filename, sizeof(filename), "Expenses_%b_%Y.txt", month_year);
+
+        file = fopen(filename, "a+");
+
+        if (file == NULL){
+            file = fopen(filename, "w+");
+            if (file == NULL){
+                printf("Error opening the file.\n");
+                return 1;
+            }
+        }
+
         printf("[1] Income\n");
         printf("[2] Expense\n");
-        printf("Please choose an option above: ");
-
+        printf("Please choose an option below: ");
         scanf("%d", &option);
-    }
+        while (option != 1 && option != 2){
+            printf("Invalid input. Please select 1 or 2.\n");
+            printf("[1] Income\n");
+            printf("[2] Expense\n");
+            printf("Please choose an option above: ");
 
-    printf("Please enter transaction details below: \n");
+            scanf("%d", &option);
+        }
 
-    getTransactionDate(date);
+        printf("Please enter transaction details below: \n");
 
-    printf("Amount: ");
-    scanf("%f", &amount);
+        getTransactionDate(date);
 
-    printf("Category: ");
-    scanf("%s", &category);
+        printf("Amount: ");
+        scanf("%f", &amount);
 
-    addTransaction(file, option, date, amount, category);
-    printTotal(file);
 
-    fclose(file);
+        while(amount <= 0) {
+            printf("Invalid amount. Please try again: ");
+        }
+
+        printf("Category: ");
+        scanf("%s", &category);
+
+        appendTransaction(file, option, date, amount, category);
+        printTotal(file);
+
+        fclose(file);
+
+    }while(1);
+
+
 
     return 0;
 
