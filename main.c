@@ -2,21 +2,20 @@
 #include <stdlib.h>
 #include <time.h>>
 void getTransactionDate(char date[]){
+    int year, month, day;
     int validDate = 0;
     while (!validDate){
         printf("Date (YYYY-MM-DD): ");
-        if (scanf("%10s", date) != 1){
+        if (scanf("%10s", date) != 1 || sscanf(date, "%4d-%2d-%2d", &year, &month, &day) != 3) {
+            printf("Invalid date format. Please try again. \n");
             while (getchar() != '\n');
-        }else{
-            int year,month,day;
-            if (sscanf(date, "%4d-%2d-%2d", &year, &month, &day) == 3){
-                if(year >= 1900 && month >= 1 && month <= 12 && day >=1 && day <= 31){
-                    validDate = 1;
-                }
+        } else {
+            // Check the validity of the date components here
+            if (year >= 1900 && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+                validDate = 1;
+            } else {
+                printf("Invalid date format. Please try again. \n");
             }
-        }
-        if (!validDate){
-            printf(" Invalid date format. Please try again. \n");
         }
     }
 }
@@ -40,7 +39,7 @@ void printTotal(FILE *file){
     printf("\n ----- Monthly Expenses ----- \n");
     printf("%-20s%-20s%-20s\n", "Date", "Category", "Amount");
 
-    while (fscanf(file, "%[^\t] \t %[^\t] \t %f", date, category, &amount)== 3){
+    while (fscanf(file, "%[^\t] \t %[^\t] \t %f", date, category, &amount) == 3){
         if (amount > 0){
             income += amount;
         }else{
@@ -122,11 +121,9 @@ int main()
         getTransactionDate(date);
 
         printf("Amount: ");
-        scanf("%f", &amount);
-
-
-        while(amount <= 0) {
+        while (scanf("%f", &amount) != 1 || amount <= 0) {
             printf("Invalid amount. Please try again: ");
+            while (getchar() != '\n'); // Clear the input buffer
         }
 
         printf("Category: ");
